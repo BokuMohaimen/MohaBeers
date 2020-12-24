@@ -1,0 +1,5 @@
+name: MohaBeers
+version: @version@
+main: beers.mohabeers.MohaBeers
+api-version: 1.16
+authors: [Mohaimen_Ksr]
