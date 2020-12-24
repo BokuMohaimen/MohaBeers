@@ -2,6 +2,7 @@ package beers.mohabeers;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -73,11 +74,13 @@ public final class MohaBeers extends JavaPlugin implements Listener {
                 if (r.nextInt(10) == 0){
                     Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "mtitle &e&lゴッドビールで1億当選！ " + e.getPlayer().getName() + " 1 5 1");
                     e.getPlayer().sendMessage("§a§l$100,000,000円を獲得！");
-                    VaultManager.economy.withdrawPlayer(e.getPlayer().getUniqueId(), 100000000);
+                    e.getPlayer().spawnParticle(Particle.HEART, e.getPlayer().getLocation(), 10, 3, 3, 3, 1, 0);
+                    VaultManager.economy.depositPlayer(e.getPlayer(), 100000000);
                     return;
                 }
                 if (r.nextInt(10) != 0){
                     e.getPlayer().sendMessage("§7外れました");
+                    e.getPlayer().spawnParticle(Particle.VILLAGER_ANGRY, e.getPlayer().getLocation(), 10, 3, 3, 3, 1, 0);
                     VaultManager.economy.depositPlayer(e.getPlayer(), 10000000);
                 }
             }
