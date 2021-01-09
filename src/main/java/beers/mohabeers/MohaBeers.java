@@ -20,12 +20,14 @@ import java.util.Random;
 public final class MohaBeers extends JavaPlugin implements Listener {
 
     Random r = new Random();
+    private VaultManager vault;
 
     @Override
     public void onEnable() {
         // Plugin startup logic
         getLogger().info("起動しました");
         Bukkit.getPluginManager().registerEvents(this, this);
+        vault = new VaultManager(this);
     }
 
     @Override
@@ -69,19 +71,24 @@ public final class MohaBeers extends JavaPlugin implements Listener {
     }
     @EventHandler
     public void onDrink(PlayerInteractEvent e) {
-        if (e.getPlayer().getInventory().getItemInMainHand().getItemMeta().getDisplayName().equals("§6§lゴッドビール")){
-            if(e.getAction() == Action.RIGHT_CLICK_AIR) {
-                if (r.nextInt(10) == 0){
+        if(e.getAction() == Action.RIGHT_CLICK_AIR){
+            if (e.getPlayer().getInventory().getItemInMainHand().getItemMeta().getDisplayName().equals("§6§lゴッドビール")) {
+                if (vault.getBalance(e.getPlayer().getUniqueId()) < 10000000){
+                    e.getPlayer().sendMessage("§7お金が足りません");
+                    return;
+                }
+                    if (r.nextInt(10) == 0){
                     Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "mtitle &e&lゴッドビールで1億当選！ " + e.getPlayer().getName() + " 1 5 1");
                     e.getPlayer().sendMessage("§a§l$100,000,000円を獲得！");
-                    e.getPlayer().spawnParticle(Particle.HEART, e.getPlayer().getLocation(), 10, 3, 3, 3, 1, 0);
-                    VaultManager.economy.depositPlayer(e.getPlayer(), 100000000);
+                    e.getPlayer().spawnParticle(Particle.HEART,e.getPlayer().getLocation().getX()+3,e.getPlayer().getLocation().getY()+3,e.getPlayer().getLocation().getZ()+3,20);
+                    vault.withdraw(e.getPlayer().getUniqueId(), 10000000);
+                    vault.deposit(e.getPlayer().getUniqueId(), 100000000);
                     return;
                 }
                 if (r.nextInt(10) != 0){
                     e.getPlayer().sendMessage("§7外れました");
-                    e.getPlayer().spawnParticle(Particle.VILLAGER_ANGRY, e.getPlayer().getLocation(), 10, 3, 3, 3, 1, 0);
-                    VaultManager.economy.depositPlayer(e.getPlayer(), 10000000);
+                    e.getPlayer().spawnParticle(Particle.VILLAGER_ANGRY, e.getPlayer().getLocation().getX(),e.getPlayer().getLocation().getY(),e.getPlayer().getLocation().getZ(),20);
+                    vault.withdraw(e.getPlayer().getUniqueId(), 10000000);
                 }
             }
         }
